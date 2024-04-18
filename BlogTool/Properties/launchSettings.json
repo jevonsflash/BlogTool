@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "BlogTool": {
+      "commandName": "Project",
+      "hotReloadEnabled": true,
+      "nativeDebugging": false
+    }
+  }
+}
