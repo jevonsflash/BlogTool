@@ -4,6 +4,7 @@ using System.IO;
 using BlogTool.Core.Options;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.Compression.Zlib;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Formats;
@@ -41,10 +42,7 @@ public class ImageProcessor : IDisposable
         _rawStream = imgStream;
         _imageLazy = new Lazy<ImageRawData>(() =>
         {
-            MemoryStream memoryStream = new MemoryStream();
-            _rawStream.CopyTo(memoryStream); // 将流的内容复制到MemoryStream中  
-            byte[] buffer = memoryStream.ToArray(); // 将MemoryStream转换为字节数组（buffer）  
-
+      
             var image =  Image.Load(_rawStream, out var format);
             return new ImageRawData(image, format);
         });
@@ -100,15 +98,9 @@ public class ImageProcessor : IDisposable
     {
         var stream = new MemoryStream();
         var image = _newImage ?? _imageLazy.Value.Image;
-        IImageFormat format;
-        if (_newFormatExtension is null)
-        {
-            format = _imageLazy.Value.Format;
-        }
-        else
-        {
-            _newImage.Configuration.ImageFormatsManager.TryFindFormatByFileExtension(_newFormatExtension, out format);
-        }
+        var format = _newFormatExtension is null
+            ? _imageLazy.Value.Format
+            : _newImage.GetConfiguration().ImageFormatsManager.FindFormatByFileExtension(_newFormatExtension);
         var encoder = GetEncoder(format, level);
         if (encoder is null)
         {
@@ -130,18 +122,10 @@ public class ImageProcessor : IDisposable
         }
 
         var stream = new MemoryStream();
-
-        IImageFormat format;
-        if (_newFormatExtension is null)
-        {
-            format = _imageLazy.Value.Format;
-        }
-        else
-        {
-            _newImage.Configuration.ImageFormatsManager.TryFindFormatByFileExtension(_newFormatExtension, out format);
-        }
         _newImage.Save(stream,
-            format);
+            _newFormatExtension is null
+                ? _imageLazy.Value.Format
+                : _newImage.GetConfiguration().ImageFormatsManager.FindFormatByFileExtension(_newFormatExtension));
 
         return stream;
     }
