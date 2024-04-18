@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace BlogTool.Core.Options
 {
     public class MetaWeblogOption
@@ -16,6 +18,8 @@ namespace BlogTool.Core.Options
             Username = username;
             Password = password;
         }
+
+        public CookieContainer Cookies = null;
 
         public MetaWeblogOption()
         {

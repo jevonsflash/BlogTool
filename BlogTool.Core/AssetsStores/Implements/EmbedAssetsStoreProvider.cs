@@ -6,7 +6,7 @@ namespace BlogTool.Core.AssetsStores.Implements;
 
 public class EmbedAssetsStoreProvider : IAssetsStoreProvider
 {
-    public string Store(Stream stream, string fileName)
+    public string Store(Stream stream, string fileName, AssetsStoreOption option)
     {
         var bytes = new byte[stream.Length];
         _ = stream.Read(bytes);
