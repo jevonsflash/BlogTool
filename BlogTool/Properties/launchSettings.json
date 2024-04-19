@@ -2,6 +2,7 @@
   "profiles": {
     "BlogTool": {
       "commandName": "Project",
+      "commandLineArgs": "-a hexo-tag-plugin",
       "hotReloadEnabled": true,
       "nativeDebugging": false
     }

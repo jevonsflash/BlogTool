@@ -3,13 +3,13 @@
 
 namespace BlogTool.Core.AssetsStores.Implements;
 
-public class LocalAssetsStoreProvider : IAssetsStoreProvider
+public class HexoTagPluginAssetsStoreProvider : IAssetsStoreProvider
 {
 
     public string Store(Stream stream, string fileName, string markdownTitle, AssetsStoreOption option)
     {
         var directoryPath = Path.Combine(option.OutputPath,
-            option.SubPath);
+             markdownTitle);
 
         if (Directory.Exists(directoryPath) == false)
         {
@@ -23,9 +23,9 @@ public class LocalAssetsStoreProvider : IAssetsStoreProvider
         }
 
         // return access path
-        return Path.Combine(option.SubPath, fileName);
+        return "{% asset_img " + fileName + " %}";
     }
 
-    public string ReplaceMode => "Content";
+    public string ReplaceMode => "Element";
 
 }

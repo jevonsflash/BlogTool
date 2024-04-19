@@ -9,7 +9,7 @@ namespace BlogTool.Core
 {
     public class Client
     {
-        public string AppKey = "9B5BAC9F20931E93EB3F39EF329001C0604ED59808E5656CDB1FA1ED85D7881C";
+        public string AppKey = "";
         public MetaWeblogOption clientOption;
 
         public Client(MetaWeblogOption connectionInfo)

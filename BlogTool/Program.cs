@@ -4,7 +4,9 @@ using BlogTool.Core.Helper;
 using BlogTool.Core.Markdown;
 using BlogTool.Core.Markdown.Implements;
 using BlogTool.Core.Options;
+using System;
 using System.Diagnostics;
+using System.Net;
 using System.Web;
 using DirFileHelper = BlogTool.Core.Helper.DirFileHelper;
 
@@ -25,51 +27,89 @@ namespace BlogTool
                 return;
             }
 
-            string defaultFontName = ConfigurationHelper.GetConfigValue("HeaderDefaultStyle:DefaultFontName", "宋体");
-            var defaultFontColor = ConfigurationHelper.GetConfigValue("HeaderDefaultStyle:DefaultFontColor", "#FFFFFF");
-            short defaultFontSize = Convert.ToInt16(ConfigurationHelper.GetConfigValue("HeaderDefaultStyle:DefaultFontSize", "10"));
-            var defaultBorderColor = ConfigurationHelper.GetConfigValue("HeaderDefaultStyle:DefaultBorderColor", "#000000");
-            var defaultBackColor = ConfigurationHelper.GetConfigValue("HeaderDefaultStyle:DefaultBackColor", "#888888");
+            config = new AppOption();
+
+            config.HexoPath = string.IsNullOrEmpty(CliProcessor.hexoPath) ? ConfigurationHelper.GetConfigValue("HexoPath", "./") : CliProcessor.hexoPath;
+            config.OutputPath = string.IsNullOrEmpty(CliProcessor.outputPath) ? ConfigurationHelper.GetConfigValue("OutputPath", "./source/_posts") : CliProcessor.outputPath;
+            config.SkipFileWhenException = Convert.ToBoolean(ConfigurationHelper.GetConfigValue("SkipFileWhenException", "true"));
+            config.AssetsStoreOption = new AssetsStoreOption()
+            {
+                AddWatermark = Convert.ToBoolean(ConfigurationHelper.GetConfigValue("AssetsStore:AddWatermark", "false")),
+                CompressionImage = Convert.ToBoolean(ConfigurationHelper.GetConfigValue("AssetsStore:CompressionImage", "false")),
+                SubPath = ConfigurationHelper.GetConfigValue("AssetsStore:SubPath", "assets"),
+                OutputPath = config.OutputPath,
+                ImageOption = new ImageOption()
+            };
+            config.GetMarkdownOption = new GetMarkdownOption()
+            {
+                MetaWeblogOption = new MetaWeblogOption()
+                {
+                    BlogURL = ConfigurationHelper.GetConfigValue("GetMarkdown:MetaWeblog:BlogURL", ""),
+                    MetaWeblogURL = ConfigurationHelper.GetConfigValue("GetMarkdown:MetaWeblog:MetaWeblogURL", ""),
+                    Username = ConfigurationHelper.GetConfigValue("GetMarkdown:MetaWeblog:Username", ""),
+                    Password = ConfigurationHelper.GetConfigValue("GetMarkdown:MetaWeblog:Password", "")
+                }
+            };
+            config.MarkdownProvider = string.IsNullOrEmpty(CliProcessor.markdownProvider) ? ConfigurationHelper.GetConfigValue("MarkdownProvider", "MetaWeblog") : CliProcessor.markdownProvider;
+            config.AssetsStoreProvider = string.IsNullOrEmpty(CliProcessor.assetsStoreProvider) ? ConfigurationHelper.GetConfigValue("AssetsStoreProvider", "Local") : CliProcessor.assetsStoreProvider;
 
 
             try
             {
 
-                config = new AppOption();
+                var client = new HttpClient();
 
                 var creator = new MarkdownCreator();
                 var handler = new AssetsStoreHandler();
-                if (config.MarkdownProvider == "MetaWeblog")
+                if (config.MarkdownProvider.ToUpper() == "METAWEBLOG")
                 {
-                    creator.SetMarkdownProvider(new GetMarkdownOption(), new MetaWeblogMarkdownProvider());
+                    creator.SetMarkdownProvider(config.GetMarkdownOption, new MetaWeblogMarkdownProvider());
 
                 }
-                else if (config.MarkdownProvider == "Local")
+                else if (config.MarkdownProvider.ToUpper() == "LOCAL")
                 {
-                    creator.SetMarkdownProvider(new GetMarkdownOption(), new LocalMarkdownProvider());
+                    creator.SetMarkdownProvider(config.GetMarkdownOption, new LocalMarkdownProvider());
 
                 }
 
-                if (config.AssetsStoreProvider == "Embed")
+                if (config.AssetsStoreProvider.ToUpper() == "EMBED")
                 {
-                    handler.SetAssetsStoreProvider(new AssetsStoreOption(), new EmbedAssetsStoreProvider());
+                    handler.SetAssetsStoreProvider(config.AssetsStoreOption, new EmbedAssetsStoreProvider());
 
                 }
-                else if (config.AssetsStoreProvider == "Local")
+                else if (config.AssetsStoreProvider.ToUpper() == "LOCAL")
                 {
 
-                    handler.SetAssetsStoreProvider(new AssetsStoreOption(), new LocalAssetsStoreProvider());
+                    handler.SetAssetsStoreProvider(config.AssetsStoreOption, new LocalAssetsStoreProvider());
                 }
+
+                else if (config.AssetsStoreProvider.ToUpper() == "HEXO-ASSET-FOLDER")
+                {
+
+                    handler.SetAssetsStoreProvider(config.AssetsStoreOption, new HexoAssetFolderAssetsStoreProvider());
+                }
+
+                else if (config.AssetsStoreProvider.ToUpper() == "HEXO-TAG-PLUGIN")
+                {
+
+                    handler.SetAssetsStoreProvider(config.AssetsStoreOption, new HexoTagPluginAssetsStoreProvider());
+                }
+
+
+
+
+
+
                 var mds = creator.Create();
 
-                string templatePath = CliProcessor.patternFilePath + "\\scaffolds\\post.md";
+                string templatePath = Path.Combine(config.HexoPath, "scaffolds", "post.md");
 
                 string fileFullPath;
 
 
-                var fileDirectory = Directory.Exists(config.DefaultOutputPath) == false
-                    ? Directory.CreateDirectory(config.DefaultOutputPath).FullName
-                    : new DirectoryInfo(config.DefaultOutputPath).FullName;
+                var fileDirectory = Directory.Exists(config.OutputPath) == false
+                    ? Directory.CreateDirectory(config.OutputPath).FullName
+                    : new DirectoryInfo(config.OutputPath).FullName;
 
 
 
@@ -88,15 +128,11 @@ namespace BlogTool
                         var fileContent = md.Description;
 
                         var imgPathDic = new Dictionary<string, string>();
-                        foreach (var img in RegexUtil.ExtractorImgFromMarkdown(fileContent))
+                        foreach (var imgContent in RegexUtil.ExtractorImgFromMarkdown(fileContent))
                         {
-                            if (img.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-                            {
-                                Console.WriteLine($"Web图片跳过：{img} ");
-                                continue;
-                            }
-
-                            if (imgPathDic.ContainsKey(img))
+                            var img = imgContent.Item2;
+                            var imgElement = imgContent.Item1;
+                            if (imgPathDic.ContainsKey(handler.IsReplaceAllElement ? imgElement : img))
                             {
                                 Console.WriteLine($"已上传图片跳过：{img} ");
                                 continue;
@@ -104,19 +140,51 @@ namespace BlogTool
 
                             try
                             {
-                                var imgPhyPath = HttpUtility.UrlDecode(Path.Combine(fileDirectory, img));
-                                if (File.Exists(imgPhyPath) == false)
+                                string imgFileName;
+                                Stream imgStream;
+                                if (img.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    throw new FileNotFoundException($"请检查Markdown图片路径是否正确，文件不存在：{imgPhyPath}");
+                                    var sourceStream = client.GetStreamAsync(img).Result;
+
+                                    imgStream = new MemoryStream();
+                                    sourceStream.CopyTo(imgStream);
+
+                                    int lastIndex = img.LastIndexOf('/');
+                                    if (lastIndex != -1 && lastIndex < img.Length - 1)
+                                    {
+                                        imgFileName = img.Substring(lastIndex + 1);
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine($"无法解析图片名称：{img} ");
+
+                                        continue;
+                                    }
+                                }
+                                else
+                                {
+
+                                    var imgPhyPath = HttpUtility.UrlDecode(Path.Combine(fileDirectory, img));
+                                    if (File.Exists(imgPhyPath) == false)
+                                    {
+                                        throw new FileNotFoundException($"请检查Markdown图片路径是否正确，文件不存在：{imgPhyPath}");
+                                    }
+
+                                    var imgFile = new FileInfo(imgPhyPath);
+                                    imgFileName = Path.GetFileName(imgFile.FullName);
+                                    imgStream = imgFile.OpenRead();
                                 }
 
-                                var imgFile = new FileInfo(imgPhyPath);
-                                imgPathDic[img] = handler.HandleAsync(imgFile, config.AssetsStoreOption);
+
+                                imgPathDic[handler.IsReplaceAllElement ? imgElement : img] = handler.HandleAsync(imgStream, imgFileName, md.Title, config.AssetsStoreOption);
+                                imgStream.Close();
+
                             }
                             catch (Exception ex) when (config.SkipFileWhenException)
                             {
                                 Console.WriteLine($"跳过图片[{img}]，异常原因：处理失败-{ex.Message}");
                             }
+
                         }
 
                         //替换

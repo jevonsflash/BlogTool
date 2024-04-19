@@ -4,33 +4,27 @@ namespace BlogTool
 {
     partial class CliProcessor
     {
-        public static List<string> inputPathList;
-        public static List<string> outputPathList;
+        public static string outputPath;
         public static string destination;
-        public static string source;
         public static bool waitAtEnd;
-        public static string patternFilePath;
+        public static string hexoPath;
+        public static string assetsStoreProvider;
+        public static string markdownProvider;
 
         public static void Usage()
         {
             var versionInfo = FileVersionInfo.GetVersionInfo(Environment.ProcessPath);
             Console.WriteLine();
-            Console.WriteLine("Excel Pattern Tool v{0}.{1}", versionInfo.FileMajorPart, versionInfo.FileMinorPart);
+            Console.WriteLine("Blog Tool v{0}.{1}", versionInfo.FileMajorPart, versionInfo.FileMinorPart);
             Console.WriteLine("参数列表:");
-            Console.WriteLine(" -p  PatternFile");
-            Console.WriteLine("     指定一个Pattern文件(Json), 作为转换的模型文件");
-            Console.WriteLine(" -i  Input");
-            Console.WriteLine("     指定一个路径，或Sql连接字符串作为导入目标");
-            Console.WriteLine("     当指定 -s 参数为sqlserver, sqlite, mysql时，需指定为连接字符串;");
-            Console.WriteLine("     当指定 -s 参数为excel时，需指定为将要读取的Excel文件路径，支持Xls或者Xlsx文件");
+            Console.WriteLine(" -x  Hexo");
+            Console.WriteLine("     指定一个Hexo的跟目录，其中必须包含scaffolds模板头, 指定后会覆盖配置");
             Console.WriteLine(" -o  Output");
-            Console.WriteLine("     指定一个路径，或Sql连接字符串作为导出目标");
-            Console.WriteLine("     当指定 -d 参数为sqlserver, sqlite, mysql时，需指定为连接字符串;");
-            Console.WriteLine("     当指定 -d 参数为excel时，需指定为将要另存的Excel文件路径，支持Xls或者Xlsx文件");
-            Console.WriteLine(" -s  Source");
-            Console.WriteLine("     值为excel, sqlserver, sqlite或者mysql");
-            Console.WriteLine(" -d  Destination");
-            Console.WriteLine("     值为excel, sqlserver, sqlite或者mysql");
+            Console.WriteLine("     指定一个路径，作为markdown和图片的导出目标，指定后会覆盖配置");
+            Console.WriteLine(" -m  MarkdownProvider");
+            Console.WriteLine("     值为metaweblog, local, 指定后会覆盖配置");
+            Console.WriteLine(" -a  AssetsStoreProvider");
+            Console.WriteLine("     值为embed, local, hexo-asset-folder, hexo-tag-plugin, 指定后会覆盖配置");
             Console.WriteLine(" -w  WaitAtEnd");
             Console.WriteLine("     指定时，程序执行完成后，将等待用户输入退出");
             Console.WriteLine(" -h  Help");
@@ -40,10 +34,7 @@ namespace BlogTool
 
         public static bool ProcessCommandLine(string[] args)
         {
-            inputPathList = new List<string>();
-            outputPathList = new List<string>();
-            destination = string.Empty;
-            source = string.Empty;
+
             var i = 0;
             while (i < args.Length)
             {
@@ -53,74 +44,60 @@ namespace BlogTool
                 switch (arg.ToLowerInvariant())
                 {
 
-                    case "p":
+                    case "x":
                         i++;
                         if (i < args.Length)
                         {
-                            if (!File.Exists(args[i]))
-                            {
-                                Console.WriteLine("文件 '{0}' 不存在", args[i]);
-                                return false;
-                            }
-                            patternFilePath= args[i];
-                        }
-                        else
-                            return false;
-                        break;
-                    case "i":
-                        i++;
-                        if (i < args.Length)
-                        {
-                            if (!File.Exists(args[i]))
-                            {
-                                Console.WriteLine("文件 '{0}' 不存在", args[i]);
-                                return false;
-                            }
-                            inputPathList.Add(args[i]);
-                        }
-                        else
-                            return false;
-                        break;
-                    case "s":
-                        i++;
-                        if (i < args.Length)
-                        {
-
-                            if (!new string[] { "excel" }.Any(c => c==args[i]))
-                            {
-                                Console.WriteLine("参数值 '{0}' 不合法", args[i]);
-                                return false;
-                            }
-                            source= args[i];
-
-                        }
-                        else
-                            return false;
-                        break;
-                    case "o":
-                        i++;
-                        if (i < args.Length)
-                        {
-                            if (args[i].IndexOfAny(System.IO.Path.GetInvalidPathChars())>=0)
+                            if (args[i].IndexOfAny(System.IO.Path.GetInvalidPathChars()) >= 0)
                             {
                                 Console.WriteLine("路径 '{0}' 不合法", args[i]);
                                 return false;
                             }
-                            outputPathList.Add(args[i]);
+                            hexoPath = args[i];
                         }
                         else
                             return false;
                         break;
-                    case "d":
+
+
+                    case "o":
                         i++;
                         if (i < args.Length)
                         {
-                            if (!new string[] { "excel", "sqlserver", "sqlite", "mysql" }.Any(c => c==args[i]))
+                            if (args[i].IndexOfAny(System.IO.Path.GetInvalidPathChars()) >= 0)
+                            {
+                                Console.WriteLine("路径 '{0}' 不合法", args[i]);
+                                return false;
+                            }
+                            outputPath = args[i];
+                        }
+                        else
+                            return false;
+                        break;
+                    case "m":
+                        i++;
+                        if (i < args.Length)
+                        {
+                            if (!new string[] { "metaweblog", "local" }.Any(c => c == args[i].ToLower()))
                             {
                                 Console.WriteLine("参数值 '{0}' 不合法", args[i]);
                                 return false;
                             }
-                            destination= args[i];
+                            markdownProvider = args[i];
+                        }
+                        else
+                            return false;
+                        break;
+                    case "a":
+                        i++;
+                        if (i < args.Length)
+                        {
+                            if (!new string[] { "embed", "local", "hexo-asset-folder", "hexo-tag-plugin" }.Any(c => c == args[i].ToLower()))
+                            {
+                                Console.WriteLine("参数值 '{0}' 不合法", args[i]);
+                                return false;
+                            }
+                            assetsStoreProvider = args[i];
                         }
                         else
                             return false;
@@ -139,11 +116,7 @@ namespace BlogTool
                 }
                 i++;
             }
-            return !string.IsNullOrEmpty(patternFilePath)
-                &&!string.IsNullOrEmpty(source)
-                &&!string.IsNullOrEmpty(destination)
-                &&inputPathList.Count > 0
-                && outputPathList.Count > 0;
+            return true;
 
         }
     }

@@ -6,8 +6,11 @@ namespace BlogTool.Core.AssetsStores
     {
 
         public string SubPath { get; set; }
-        public bool AddWatermark { get; internal set; }
-        public bool CompressionImage { get; internal set; }
-        public ImageOption ImageOption { get; internal set; }
+        public bool AddWatermark { get; set; }
+        public bool CompressionImage { get; set; }
+        public ImageOption ImageOption { get; set; }
+
+        public string OutputPath;
+
     }
 }

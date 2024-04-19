@@ -15,13 +15,8 @@ namespace BlogTool.Core.Markdown.Implements
             // 使用完整url
             //var option = new ClientOption("blogurl", "metaweblogurl", "blogname", "username", "pat");
             var client = new Client(option.MetaWeblogOption);
-
             // 获取你的blogId
             var blogs = client.GetUsersBlogs();
-            // 获取分类
-            var categories = client.GetCategories();
-
-            var userblogs = client.GetUsersBlogs();
             var recent = client.GetRecentPosts(5);
             markdowns.AddRange(recent);
             return markdowns;

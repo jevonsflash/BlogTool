@@ -9,7 +9,9 @@ namespace BlogTool.Core.AssetsStores
 
         }
 
-        public abstract string Store(Stream stream, string fileName, AssetsStoreOption option);
+        public abstract string ReplaceMode { get; }
+
+        public abstract string Store(Stream stream, string fileName, string markdownTitle, AssetsStoreOption option);
 
     }
 }

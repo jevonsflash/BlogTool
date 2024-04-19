@@ -8,7 +8,8 @@ namespace BlogTool.Core.Options
     /// </summary>
     public class AppOption
     {
-        public string DefaultOutputPath { get; set; }
+        public string HexoPath { get; set; }
+        public string OutputPath { get; set; }
         public bool SkipFileWhenException { get; set; }
 
         public AssetsStoreOption AssetsStoreOption { get; set; }

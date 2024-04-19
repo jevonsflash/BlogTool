@@ -10,20 +10,20 @@ namespace BlogTool.Core.AssetsStores
         private IAssetsStoreProvider markdownCreatorProvider;
 
 
-        public string HandleAsync(FileInfo imageFile, AssetsStoreOption config)
+        public string HandleAsync(Stream imgStream, string fileName, string markdownTitle, AssetsStoreOption config)
         {
 
 
             ProcessImageResult result = null;
             try
             {
-                Console.WriteLine($"\n图片开始处理：[{Path.GetFileName(imageFile.FullName)}]");
-                var (skip, imgStream, fileName) = result = ImgUtil.ProcessImage(
+                Console.WriteLine($"\n图片开始处理：[{fileName}]");
+                var (skip, stream, file) = result = ImgUtil.ProcessImage(
                     config.AddWatermark,
                     config.CompressionImage,
                     config.ImageOption,
-                    imageFile);
-                var length = imgStream.Length;
+                    imgStream, fileName);
+                var length = stream.Length;
 
                 if (skip)
                 {
@@ -34,9 +34,9 @@ namespace BlogTool.Core.AssetsStores
                     Console.WriteLine("图片水印、压缩、转换处理成功");
                 }
 
-                imgStream.Seek(0, SeekOrigin.Begin);
+                stream.Seek(0, SeekOrigin.Begin);
 
-                var displayUrl = markdownCreatorProvider.Store(imgStream, fileName, _option);
+                var displayUrl = markdownCreatorProvider.Store(stream, file, markdownTitle, _option);
 
                 if (displayUrl.Length > 256)
                 {
@@ -44,7 +44,7 @@ namespace BlogTool.Core.AssetsStores
                 }
 
                 Console.WriteLine($"图片存储成功，存储路径：{displayUrl}");
-                Console.WriteLine($"大小：{imageFile.Length / 1024.0:F}Kb -> {length / 1024.0:F}Kb");
+
                 return displayUrl;
             }
             finally
@@ -59,7 +59,7 @@ namespace BlogTool.Core.AssetsStores
 
         }
 
-
+        public bool IsReplaceAllElement => markdownCreatorProvider.ReplaceMode == "Element";
 
 
         public AssetsStoreHandler(AssetsStoreOption option, IAssetsStoreProvider markdownCreatorProvider) : this()

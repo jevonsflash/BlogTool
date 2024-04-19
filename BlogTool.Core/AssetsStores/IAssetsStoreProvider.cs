@@ -4,6 +4,7 @@ namespace BlogTool.Core.AssetsStores
 {
     public interface IAssetsStoreProvider
     {
-        string Store(Stream stream, string fileName, AssetsStoreOption option);
+        public string ReplaceMode { get; }
+        string Store(Stream stream, string fileName, string markdownTitle, AssetsStoreOption option);
     }
 }

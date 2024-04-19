@@ -10,10 +10,8 @@ public static class ImgUtil
         bool addWatermark,
         bool compressImg,
         ImageOption imageConfig,
-        FileInfo imgFile)
+        Stream imgStream, string fileName)
     {
-        var imgStream = imgFile.OpenRead();
-        var fileName = Path.GetFileName(imgFile.FullName);
         if (addWatermark == false && compressImg == false)
             return new ProcessImageResult(false, imgStream, fileName);
 
