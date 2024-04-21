@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace BlogTool.Core.Markdown.Implements
 {
@@ -18,8 +19,37 @@ namespace BlogTool.Core.Markdown.Implements
             // 获取你的blogId
             var blogs = client.GetUsersBlogs();
             var recent = client.GetRecentPosts(5);
+
+            foreach (var recentItem in recent)
+            {
+                var categories = new List<string>();
+                foreach (var category in recentItem.Categories)
+                {
+                    var content = ExtractContentOutsideBrackets(category);
+                    if (!string.IsNullOrEmpty(content))
+                    {
+                        categories.Add(content);
+                    }
+                }
+                recentItem.Categories= categories;
+
+            }
+
+
             markdowns.AddRange(recent);
             return markdowns;
+        }
+
+        private string ExtractContentOutsideBrackets(string input)
+        {
+            string pattern = @"\[.*?\](.*)";
+            Match match = Regex.Match(input, pattern);
+
+            if (match.Success)
+            {
+                return match.Groups[1].Value.Trim();
+            }
+            return string.Empty;
         }
 
     }

@@ -49,13 +49,18 @@ namespace BlogTool.Core
                     CommentCount = struct_.Get<IntegerValue>("commentCount", 0).Integer,
                     PostStatus = struct_.Get("post_status", StringValue.NullString).String,
                     PermaLink = struct_.Get("permaLink", StringValue.NullString).String,
-                    Description = struct_.Get("description", StringValue.NullString).String
+                    Description = struct_.Get("description", StringValue.NullString).String,
+                    Categories=GetArray(struct_, "categories"),
+                    Keywords= struct_.Get("mt_keywords", StringValue.NullString).String,
                 };
+
+
 
                 items.Add(postinfo);
             }
             return items;
         }
+
 
         public MediaObjectInfo NewMediaObject(string name, string type, byte[] bits)
         {
@@ -112,23 +117,12 @@ namespace BlogTool.Core
                 PermaLink = struct_.Get("permaLink", StringValue.NullString).String,
                 PostStatus = struct_.Get("post_status", StringValue.NullString).String,
                 Title = struct_.Get<StringValue>("title").String,
-                UserID = struct_.Get("userid", StringValue.NullString).String
+                UserID = struct_.Get("userid", StringValue.NullString).String,
+                Categories=GetArray(struct_, "categories"),
+                Keywords= struct_.Get("mt_keywords", StringValue.NullString).String,
             };
 
-            XmlRPC.Array rawCats = struct_.Get<XmlRPC.Array>("categories");
 
-            rawCats.ToList().ForEach(i =>
-            {
-                if (i is StringValue)
-                {
-                    string cat = (i as StringValue).String;
-
-                    if (cat != "" && !postinfo.Categories.Contains(cat))
-                    {
-                        postinfo.Categories.Add(cat);
-                    }
-                }
-            });
 
             return postinfo;
         }
@@ -378,5 +372,27 @@ namespace BlogTool.Core
 
             return item;
         }
+
+        private List<string> GetArray(Struct struct_, string name)
+        {
+
+            var result = new List<string>();
+            XmlRPC.Array rawCats = struct_.Get<XmlRPC.Array>(name);
+
+            rawCats.ToList().ForEach(i =>
+            {
+                if (i is StringValue)
+                {
+                    string cat = (i as StringValue).String;
+
+                    if (cat != "" && !result.Contains(cat))
+                    {
+                        result.Add(cat);
+                    }
+                }
+            });
+            return result;
+        }
+
     }
 }

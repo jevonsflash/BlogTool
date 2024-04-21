@@ -14,6 +14,12 @@ namespace BlogTool.Core.Models
             set;
         }
 
+        public string Keywords
+        {
+            get;
+            set;
+        }
+
         public string Link
         {
             get;

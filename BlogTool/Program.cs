@@ -7,6 +7,7 @@ using BlogTool.Core.Options;
 using System;
 using System.Diagnostics;
 using System.Net;
+using System.Text;
 using System.Web;
 using DirFileHelper = BlogTool.Core.Helper.DirFileHelper;
 
@@ -15,6 +16,25 @@ namespace BlogTool
     partial class Program
     {
         private static AppOption config;
+
+
+
+
+
+        static string InsertLine(string inputString, int lineNumber, string contentToInsert)
+        {
+            int indexToInsert = 0;
+            for (int i = 0; i < lineNumber - 1; i++)
+            {
+                indexToInsert = inputString.IndexOf('\n', indexToInsert) + 1;
+                if (indexToInsert == 0)
+                {
+                    return inputString;
+                }
+            }
+
+            return inputString.Insert(indexToInsert, contentToInsert + "\n");
+        }
 
         static void Main(string[] args)
         {
@@ -48,7 +68,8 @@ namespace BlogTool
                     MetaWeblogURL = ConfigurationHelper.GetConfigValue("GetMarkdown:MetaWeblog:MetaWeblogURL", ""),
                     Username = ConfigurationHelper.GetConfigValue("GetMarkdown:MetaWeblog:Username", ""),
                     Password = ConfigurationHelper.GetConfigValue("GetMarkdown:MetaWeblog:Password", "")
-                }
+                },
+                ReadMorePosition=Convert.ToInt32(ConfigurationHelper.GetConfigValue("GetMarkdown:ReadMorePosition", "-1"))
             };
             config.MarkdownProvider = string.IsNullOrEmpty(CliProcessor.markdownProvider) ? ConfigurationHelper.GetConfigValue("MarkdownProvider", "MetaWeblog") : CliProcessor.markdownProvider;
             config.AssetsStoreProvider = string.IsNullOrEmpty(CliProcessor.assetsStoreProvider) ? ConfigurationHelper.GetConfigValue("AssetsStoreProvider", "Local") : CliProcessor.assetsStoreProvider;
@@ -125,7 +146,33 @@ namespace BlogTool
                         templateMd = templateMd.Replace("{{ title }}", md.Title);
                         templateMd = templateMd.Replace("{{ date }}", md.DateCreated.HasValue ? md.DateCreated.Value.ToString("yyyy-MM-dd HH:mm:ss") : DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
+                        string categoriesNode = "categories:\n";
+                        foreach (var category in md.Categories)
+                        {
+                            categoriesNode += $"  - {category}\n";
+                        }
+
+                        templateMd = templateMd.Replace("categories:", categoriesNode);
+
+                        string keywordsNode = "tags:\n";
+                        foreach (var keyword in md.Keywords.Split(","))
+                        {
+                            keywordsNode += $"  - {keyword}\n";
+                        }
+
+                        templateMd = templateMd.Replace("tags:", keywordsNode);
+
+
                         var fileContent = md.Description;
+
+                        int lineNumberToInsert = config.GetMarkdownOption.ReadMorePosition;
+
+                        if (lineNumberToInsert>0)
+                        {
+                            fileContent = InsertLine(fileContent, lineNumberToInsert, "<!-- more -->");
+
+                        }
+                        fileContent=fileContent.Replace("@[toc]", "<!-- toc -->");
 
                         var imgPathDic = new Dictionary<string, string>();
                         foreach (var imgContent in RegexUtil.ExtractorImgFromMarkdown(fileContent))
