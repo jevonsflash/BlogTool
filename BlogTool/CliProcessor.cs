@@ -8,6 +8,7 @@ namespace BlogTool
         public static string destination;
         public static bool waitAtEnd;
         public static string hexoPath;
+        public static int recentTakeCount;
         public static string assetsStoreProvider;
         public static string markdownProvider;
 
@@ -18,9 +19,11 @@ namespace BlogTool
             Console.WriteLine("Blog Tool v{0}.{1}", versionInfo.FileMajorPart, versionInfo.FileMinorPart);
             Console.WriteLine("参数列表:");
             Console.WriteLine(" -x  Hexo");
-            Console.WriteLine("     指定一个Hexo的跟目录，其中必须包含scaffolds模板头, 指定后会覆盖配置");
+            Console.WriteLine("     指定一个Hexo的根目录，其中必须包含scaffolds模板Markdown文件, 指定后会覆盖配置");
             Console.WriteLine(" -o  Output");
-            Console.WriteLine("     指定一个路径，作为markdown和图片的导出目标，指定后会覆盖配置");
+            Console.WriteLine("     指定一个路径，作为Markdown和图片的导出目标，指定后会覆盖配置");
+            Console.WriteLine(" -r  RecentTakeCount");
+            Console.WriteLine("     获取最近Markdown文件数");
             Console.WriteLine(" -m  MarkdownProvider");
             Console.WriteLine("     值为metaweblog, local, 指定后会覆盖配置");
             Console.WriteLine(" -a  AssetsStoreProvider");
@@ -70,6 +73,21 @@ namespace BlogTool
                                 return false;
                             }
                             outputPath = args[i];
+                        }
+                        else
+                            return false;
+                        break;
+                    case "r":
+                        i++;
+                        if (i < args.Length)
+                        {
+                            int cnt;
+                            if (!int.TryParse(args[i], out cnt) || cnt <= 0)
+                            {
+                                Console.WriteLine("参数值 '{0}' 不合法", args[i]);
+                                return false;
+                            }
+                            recentTakeCount = cnt;
                         }
                         else
                             return false;

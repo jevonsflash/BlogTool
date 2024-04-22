@@ -18,7 +18,7 @@ namespace BlogTool.Core.Markdown.Implements
             var client = new Client(option.MetaWeblogOption);
             // 获取你的blogId
             var blogs = client.GetUsersBlogs();
-            var recent = client.GetRecentPosts(5);
+            var recent = client.GetRecentPosts(option.RecentTakeCount);
 
             foreach (var recentItem in recent)
             {

@@ -1,415 +1,138 @@
 # BlogTool
 
-开箱即用的Excel工具包。
-Excel数据校验，数据导入，以及自定义样式填充数据导出到Excel文档。
+使用Hexo风格的Markdown格式化，整理与归档图片的工具。
 
-## 功能
-可设置列属性，包括样式，公式，注解；
-可配置规则独立设置单元格样式；
-可配置规则对Excel校验，包括数值校验和公式校验，内置Lambda表达式和正则表达式两个预设的校验器；
-可扩展的接口封装和组件。
+## 介绍
 
-## 特点：
-提供独立Excel校验工具；
-提供Cli版本和带UI（WPF）版本的程序；
-提供ODBC扩展；
-基于json文件或类型+成员属性（Attribute）的配置方式。
+根据指定的Hexo[模板(Scaffold)](https://hexo.io/zh-cn/api/scaffolds) 批量将Markdown文件格式化，并将Markdown编辑插入的图片保存到本地。
+
+## 特点
 
 
-## 快速开始
-
-在项目中引用[BlogTool.Core]( https://www.nuget.org/packages/BlogTool.Core)
-
-
-```
-dotnet add package BlogTool.Core
-```
-
-从Excel导入
-```
-Importer import = new Importer();
-import.LoadXlsx(File.ReadAllBytes(filePath));   //导入xlsx文件
-// or
-import.LoadXls(File.ReadAllBytes(filePath));    //或导入xls文件
-var importOption = new ImportOption<T>(0, 0);
-var result = import.Process<T>(importOption).ToList()
-
-Console.WriteLine(result);      //导入完成！
-
-```
-
-导出Excel
-```
-IList<T> src = ...  //准备数据
+1. 支持MetaWeblog协议
+2. Hexo模板头处理和常用标签处理
+3. 支持图片保存为内嵌Base64编码
+4. 支持图片保存为[资源文件夹](https://hexo.io/zh-cn/docs/asset-folders#%E6%96%87%E7%AB%A0%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6%E5%A4%B9)
+5. 支持图片保存为[标签插件](https://hexo.io/zh-cn/docs/asset-folders#%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E5%BC%95%E7%94%A8%E7%9A%84%E6%A0%87%E7%AD%BE%E6%8F%92%E4%BB%B6)
+6. 支持自定义图片文字水印（支持：PNG、JPG、Webp、Gif、Tiff、BMP）
+7. 支持图片压缩（支持：PNG、JPG、Webp、Tiff），转换格式
 
 
-Exporter exporter = new Exporter();
-exporter.DumpXlsx(filePath);    //导出xlsx文件
-// or
-exporter.DumpXls(filePath);     //或导出xls文件
-var exportOption = new ExportOption<T>(0);
-var issuccess = exporter.Process(src, exportOption); //导出完成！
-```
+## 更新内容
 
-## 使用说明
-
-编辑你的C#类，此类将作为BlogTool导入导出功能的承载实体类型，继承自`IExcelEntity`
-
-### 常规类型 
-
-常规类型是C#基本数据类型，直接输出的为单元格值
-
-可定义 `string`， `DateTime`，`int`，`double`，`bool`
-
-### 高级类型
-
-使用高级类型导入时不光读取数据，还将读取单元格细节，导出至Excel时，将保留这些细节。
-
-高级类型是继承自IAdvancedType的类，往往是一个泛型，它的类型参数为常规类型，对应实际的单元格值。
-
-高级类型有："包含注解"，"包含样式"，"包含公式"，"全包含"类型。
-
-1. ICommentedType: 包含单元格注解；
-2. IStyledType: 包含单元格样式；
-3. IFormulatedType: 包含单元格公式的对象；
-4. IFullAdvancedType: 包含了单元格注解，样式，公式。
+|  Date  |  Version   | Content                                                                                         |
+| :----: | :--------: | :---------------------------------------------------------------------------------------------- |
+| V0.1.0 | 2024-4-22  | 初始版本                                                                           
 
 
+## 配置
 
-### Importable注解
-1. Order 列序号为此列在Excel中的编号，从0开始，即A列对应0，B列对应1 ...
+支持基于JSON配置文件和命令行参数配置。
 
-2. Ignore 为True时将忽略这一列，等效于ExcelEntity无此属性
-
-### Exportable注解
-1. Order 列序号为此列在Excel中的编号，从0开始，即A列对应0，B列对应1 ...
-
-2. Name 列名称，将指定导出时的该列第一行名称
-
-3. Ignore 为True时将忽略这一列，等效于ExcelEntity无此属性
-
-4. Format 指定单元格格式，格式约定请参考[Excel 自定义单元格格式](./Assets/format.md)
-
-5. Type: 单元格类型， Exportable中可指定Type类型的为
-
-    |    值     |  含义  |
-    | :-------: | :----: |
-    |   `Any`   | 自定义 |
-    |  `Text`   |  文本  |
-    | `Numeric` |  数值  |
-    |  `Date`   |  时间  |
-    |  `Bool`   | 布尔值 |
-  
-    若不指定则根据属性类型自动判断
+### 配置文件
 
 
-### IImportOption导入选项
+默认的配置文件`appsettings.json`内容如下:
 
-1. EntityType 指定一个实体类型，将使用此类型中的属性作为导入列
-2. SheetName 指定导入的Sheet名称，若不指定将导入第SheetNumber个Sheet
-3. SheetNumber 指定导入的Sheet编号，从0开始。
-4. SkipRows 指定跳过的行数，从0开始。
-
-
-### IExportOption导出选项
-
-1. EntityType 指定一个实体类型，将使用此类型中的属性作为导出列
-2. SheetName 指定导出的Sheet名称，默认`Sheet1`
-3. SkipRows 指定跳过的行数，从0开始。
-4. GenHeaderRow 指定是否生成表头行，默认为False
-5. StyleMapperProvider 指定样式映射器类型
-
-### 单元格样式
-
-样式支持文字颜色、背景颜色、边框颜色、字体、字号、加粗、下划线、斜体、删除线等。
-填充规则支持全局样式，列样式，以及根据样式映射器的规则填充单元格独立样式。
-
-
-单元格通过StyleMetadata样式元数据定义样式，样式元数据包括：
-1. FontColor 字体颜色
-2. FontName 字体名称
-3. FontSize 字体大小（单位px）
-4. BorderColor 边框颜色
-5. BackColor 背景颜色
-6. IsItalic 是否斜体
-7. IsBold 是否加粗
-8. IsStrikeout 是否删除线
-9. FontUnderlineType 下划线类型
-10. FontSuperScript 上标下标
-
-
-### StyleMapping样式映射
-
-样式映射器用于将实体类型属性映射为单元格样式，可自定义实现，也可使用内置的样式映射器。
-
-1. Target 指定样式映射的目标属性，可选Value单元格值或Formula单元格公式
-2. Convention 指定规则，默认的规则有`LambdaExpression`和`RegularExpression`，分别对应Lambda表达式和正则表达式
-3. Expression 指定表达式内容
-4. MappingConfig 指定表达式结果对应的样式元数据
-
-自定义样式：
-通过继承StyleMapperProvider类，重写GetStyleMappingContainers方法，返回的字典称之为`样式映射容器`，作用是将规则对应的数值与样式一一对应。
-
-下面例子说明当“体温”列中的数据超过36.5时，将字体颜色设置为红色，否则为黑色。
-```
-public override Dictionary<string, StyleMapping> GetStyleMappingContainers()
+```JSON
 {
-    return new Dictionary<string, StyleMapping>
-    {
-        "体温",
-        new StyleMapping()
-        {
-            Target = Target.Value,
-            Convention = "LambdaExpression",
-            Expression = "{value}>36.5",
-            MappingConfig = new Dictionary<object, StyleMetadata>
-            {
-                { true, new StyleMetadata(){  FontColor="Red"} } ,
-                { false, new StyleMetadata(){  FontColor="Black"} }
-            }
-        }
+  "HexoPath": "./", //指定一个Hexo的根目录，其中必须包含scaffolds模板Markdown文件【可被-x参数覆盖】
+  "OutputPath": "./source/_posts", //指定一个路径，作为Markdown和图片的导出目标，指定后会覆盖配置【可被-o参数覆盖】
+  "SkipFileWhenException": true, //是否跳过处理异常的文件 true：跳过该文件，继续处理其它文件 false：抛出异常，终止处理
+  "AssetsStore": {
+    "AddWatermark": false, // 是否添加水印
+    "CompressionImage": false, //是否压缩图片
+    "SubPath": ".", //图片于输出子目录
+    "Image": {
+      "SkipNotSupportFormat": true, // 遇到不支持的图片类型是否跳过，否则就抛异常终止
+      "WatermarkText": "InCerry", // 水印文字
+      "WatermarkFontSize": 30, // 水印文字大小，如果图片小于文字大小，那么会缩放
+      "WatermarkFont": "Microsoft Yahei", // 使用的字体类型，默认使用微软雅黑，Mac和Linux用户可自行配置系统安装的字体
+      "WatermarkFontColor": "#FFF", // 字体颜色
+      "CompressionLevel": "Low", // 压缩级别，级别越高大小越小，质量就越低，级别从低到高为：Low Medium High
+      "ConvertFormatTo": "jpg" // 是否转换格式，支持一些常见的图片格式，如果不想转换，填null即可 如："ConvertFormatTo": null
     }
-    
+  },
+  "GetMarkdown": {
+    "MetaWeblog": {
+      "MetaWeblogURL": "https://rpc.cnblogs.com/metaweblog/jevonsflash", // MetaWeblog地址
+      "Username": "jevonslin", //用户名
+      "Password": "9B5BAC9F20931E93EB3F39EF329001C0604ED59808E5656CDB1FA1ED85D7881C" //密码
+    },
+    "ReadMorePosition": 5, //<!-- more -->标签所在的行数，设置-1时将不添加此标签
+    "RecentTakeCount": 1 //获取最近文件数
+  },
+  "MarkdownProvider": "MetaWeblog", //Markdown内容提供方式，值为MetaWeblog, Local【可被-m参数覆盖】
+  "AssetsStoreProvider": "Local" //图片存储方式，值为Embed, Local, Hexo-Asset-Folder, Hexo-Tag-Plugin【可被-a参数覆盖】
 }
 ```
 
+### 命令行参数
+
+参数列表:
+
+| 参数  |    含义     | 用法                                                                                                                                                                                                  |
+| :---: | :---------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|  -x   | Hexo | 指定一个Hexo的根目录，其中必须包含scaffolds模板Markdown文件, 指定后会覆盖配置                                                                                
+|  -o   |   Output    | 指定一个路径，作为Markdown和图片的导出目标，指定后会覆盖配置 |
+|  -r   |   RecentTakeCount    | 获取最近Markdown文件数  
+|  -m   |   MarkdownProvider    | 值为`metaweblog`, `local`, 指定后会覆盖配置                                                                                                                                                         |
+|  -a   | AssetsStoreProvider | 值为`embed`, `local`, `hexo-asset-folder`, `hexo-tag-plugin`, 指定后会覆盖配置                                                                                                                                                         |
+|  -w   |  WaitAtEnd  | 指定时，程序执行完成后，将等待用户输入退出                                                                                                                                                            |
+|  -h   |    Help     | 查看帮助       
 
 
-创建后将导出选项的StyleMapperProvider指定为该样式映射器类型
-
-### 使用数据库作为数据源
-
-1. 若涉及数据库导入导出，请使用`Table`标签指定表名称， 使用`Key`标签指定主键类型，无键实体类型请使用`Keyless`
-详情请参考EFCore官方文档https://docs.microsoft.com/zh-cn/ef/core/modeling/
 
 ## 示例
-### Sample1：不同类型字段导出
 
-假设某类中有如下字段
+使用hexo-cli创建项目
+
 ```
-public class WriteRowTestEntity : IExcelEntity
-{
-    [Exportable(ignore: true)]
-    public long RowNumber { get; set; }
+hexo init blog
+```
+或从Github下载hexo项目
 
-    [Exportable("日期", Order = 1, Format = "yyyy\"年\"m\"月\"d\"日\";@")]
-    public DateTime DateTimeValue { get; set; }
-
-    [Exportable("整数", Order = 2)]
-    public int IntValue { get; set; }
-
-    [Exportable("小数", Order = 3)]
-    public double DoubleValue { get; set; }
-
-    [Exportable("布尔值", Order = 4)]
-    public bool BoolValue { get; set; }
-
-    [Exportable("公式", Order = 7)]
-    public FormulatedType<int> IntWithFormula { get; set; }
-}
+```
+mkdir -p D:\Project 
+cd D:\Project
+git clone https://github.com/jevonsflash/blog.git blog
 ```
 
-导出时日期按照给定格式生成，整数、小数、布尔值根据类型自动判断，公式将导出公式内容。
+### Sample1：图片保存在本地assets文件夹
 
 
-
-![Alt text](./Assets/image-5.png)
-
-
-### Sample2：高级类型导入和导出
-
-假设某类中有如下字段
 ```
-    public class AdvancedTypeTestEntity : IExcelEntity
-    {
-
-        [Exportable(ignore: true)]
-        [Importable(ignore: true)]
-        public long RowNumber { get; set; }
-
-        [Exportable("全", Order = 4)]
-        [Importable(0)]
-        public FullAdvancedType<string> StringWithFullValue { get; set; }
-    }
+blogtool.exe -r 5 -a local -x D:\Project\blog\ -o D:\Project\blog\source\_posts
 ```
 
-StringWithFullValue将在导入时存储单元格的注解，样式，公式，以及值。导出时按照原样导出。
-
-![Alt text](./Assets/image-3.png)
+![alt text](Assets/image-3.png)
 
 
-### Sample3：员工健康体检
 
-假设某类中有如下字段
+### Sample2：图片保存为标签插件
+
 ```
-    public class EmployeeHealthEntity : IExcelEntity
-    {
-
-
-        [Exportable(Ignore = true)]
-        public long RowNumber { get; set; }
-
-        [Importable(0)]
-        [Exportable("姓名")]
-        public string ClientName { get; set; }
-
-        [Importable(1)]
-        [Exportable("收缩压")]
-        public string BloodPressure2 { get; set; }
-
-        [Importable(2)]
-        [Exportable("舒张压")]
-        public string BloodPressure1 { get; set; }
-
-        [Importable(3)]
-        [Exportable("体温")]
-        public string Temperature { get; set; }
-
-    }
+blogtool.exe -r 5 -a hexo-asset-folder -x D:\Project\blog\ -o D:\Project\blog\source\_posts
 ```
 
 
-自定义样式映射器EmployeeHealthEntityStyleMapperProvider类，重写获取样式容器GetStyleMappingContainers方法，
-
-内容如下：
-```
-public class EmployeeHealthEntityStyleMapperProvider : StyleMapperProvider
-{
-    public override Dictionary<string, StyleMapping> GetStyleMappingContainers()
-    {
-        var result = new Dictionary<string, StyleMapping>
-        {
-            {
-                "体温",
-                new StyleMapping()
-                {
-                    Target = Target.Value,
-                    Convention = "LambdaExpression",
-                    Expression = "{value}>=36.5",
-                    MappingConfig = new Dictionary<object, StyleMetadata>
-                    {
-                        { true, new StyleMetadata(){  FontColor="Red"} } ,
-                        { false, new StyleMetadata(){  FontColor="Black"} }
-                    }
-                }
-            },
-                {
-                "收缩压",
-                new StyleMapping()
-                {
-                    Target = Target.Value,
-                    Convention = "BloodPressureResultExpression",
-                    MappingConfig = new Dictionary<object, StyleMetadata>
-                    {
-                        { "偏低异常", new StyleMetadata(){  FontColor="Orange"} } ,
-                        { "偏高异常", new StyleMetadata(){  FontColor="Red"} },
-                        { "正常", new StyleMetadata(){  FontColor="Black"} }
-                    }
-                }
-
-            },
-                {
-                "舒张压",
-                new StyleMapping()
-                {
-                    Target = Target.Value,
-                    Convention = "BloodPressureResultExpression",
-                    MappingConfig = new Dictionary<object, StyleMetadata>
-                    {
-                        { "偏低异常", new StyleMetadata(){  FontColor="Orange"} } ,
-                        { "偏高异常", new StyleMetadata(){  FontColor="Red"} },
-                        { "正常", new StyleMetadata(){  FontColor="Black"} }
-                    }
-                }
-
-            },
+![alt text](Assets/image-1.png)
 
 
-        };
-        return result;
-    }
-```
+Markdown 中的图片修改为`{% asset_path slug %}`格式
 
-重写InitConventions将血压的样式映射规则定义为BloodPressureResultExpression，并添加到基类的样式映射规则中，内容如下：
+![alt text](Assets/image-2.png)
 
-```
-    public override Dictionary<string, StyleConvention> InitConventions()
-    {
+## Todo:
 
-        var baseOne = base.InitConventions();
-        baseOne.Add("BloodPressureResultExpression", new StyleConvention(new Func<string, StyleMapping, object, StyleMetadata>((key, c, e) =>
-        {
-            StyleMetadata result = null;
-            var lambdaParser = new LambdaParser();
-            if (c == null)
-            {
-                return null;
-            }
-            var val = double.Parse((string)TryGetValue(key, e));
-            if (key == nameof(EmployeeHealthEntity.BloodPressure2))
-            {
-                if (val > 140)
-                {
-                    result = c.MappingConfig["偏高异常"];
-
-                }
-                else if (val < 90)
-                {
-                    result = c.MappingConfig["偏低异常"];
-
-                }
-                else
-                {
-                    result = c.MappingConfig["正常"];
-                }
-            }
-
-            else if (key == nameof(EmployeeHealthEntity.BloodPressure1))
-            {
-                if (val > 90)
-                {
-                    result = c.MappingConfig["偏高异常"];
-
-                }
-                else if (val < 60)
-                {
-                    result = c.MappingConfig["偏低异常"];
-
-                }
-                else
-                {
-                    result = c.MappingConfig["正常"];
-                }
-            }
-
-
-
-            return result;
-
-        })));
-        return baseOne;
-
-    }
-}
-
-```
-
-![Alt text](./Assets/image-4.png)
-
-
-
-
-
-## 工具
-
-[Roslyn Syntax Tool](https://github.com/jevonsflash/RoslynSyntaxTool)
-
-* 此工具能将C#代码，转换成使用语法工厂构造器（SyntaxFactory）生成等效语法树代码
+- [ ] 本地Markdown导入
+- [ ] 七牛云存储
+- [ ] WPF界面
 
 
 ## 已知问题
 
-
+无
 
 ## 作者信息
 

@@ -2,7 +2,7 @@
   "profiles": {
     "BlogTool": {
       "commandName": "Project",
-      "commandLineArgs": "-a hexo-asset-folder -x D:\\Project\\blog\\ -o D:\\Project\\blog\\source\\_posts",
+      "commandLineArgs": "-r 2 -a hexo-asset-folder -x D:\\Project\\blog\\ -o D:\\Project\\blog\\source\\_posts",
       "hotReloadEnabled": true,
       "nativeDebugging": false
     }

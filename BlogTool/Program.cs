@@ -59,17 +59,22 @@ namespace BlogTool
                 SubPath = ConfigurationHelper.GetConfigValue("AssetsStore:SubPath", "assets"),
                 OutputPath = config.OutputPath,
                 ImageOption = new ImageOption()
+                {
+
+
+                }
             };
             config.GetMarkdownOption = new GetMarkdownOption()
             {
                 MetaWeblogOption = new MetaWeblogOption()
                 {
-                    BlogURL = ConfigurationHelper.GetConfigValue("GetMarkdown:MetaWeblog:BlogURL", ""),
+                    //BlogURL = ConfigurationHelper.GetConfigValue("GetMarkdown:MetaWeblog:BlogURL", ""),
                     MetaWeblogURL = ConfigurationHelper.GetConfigValue("GetMarkdown:MetaWeblog:MetaWeblogURL", ""),
                     Username = ConfigurationHelper.GetConfigValue("GetMarkdown:MetaWeblog:Username", ""),
                     Password = ConfigurationHelper.GetConfigValue("GetMarkdown:MetaWeblog:Password", "")
                 },
-                ReadMorePosition=Convert.ToInt32(ConfigurationHelper.GetConfigValue("GetMarkdown:ReadMorePosition", "-1"))
+                ReadMorePosition = Convert.ToInt32(ConfigurationHelper.GetConfigValue("GetMarkdown:ReadMorePosition", "-1")),
+                RecentTakeCount = CliProcessor.recentTakeCount <= 0 ? Convert.ToInt32(ConfigurationHelper.GetConfigValue("GetMarkdown:RecentTakeCount", "1")) : CliProcessor.recentTakeCount
             };
             config.MarkdownProvider = string.IsNullOrEmpty(CliProcessor.markdownProvider) ? ConfigurationHelper.GetConfigValue("MarkdownProvider", "MetaWeblog") : CliProcessor.markdownProvider;
             config.AssetsStoreProvider = string.IsNullOrEmpty(CliProcessor.assetsStoreProvider) ? ConfigurationHelper.GetConfigValue("AssetsStoreProvider", "Local") : CliProcessor.assetsStoreProvider;
@@ -167,12 +172,12 @@ namespace BlogTool
 
                         int lineNumberToInsert = config.GetMarkdownOption.ReadMorePosition;
 
-                        if (lineNumberToInsert>0)
+                        if (lineNumberToInsert > 0)
                         {
                             fileContent = InsertLine(fileContent, lineNumberToInsert, "<!-- more -->");
 
                         }
-                        fileContent=fileContent.Replace("@[toc]", "<!-- toc -->");
+                        fileContent = fileContent.Replace("@[toc]", "<!-- toc -->");
 
                         var imgPathDic = new Dictionary<string, string>();
                         foreach (var imgContent in RegexUtil.ExtractorImgFromMarkdown(fileContent))
