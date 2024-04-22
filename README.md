@@ -56,8 +56,8 @@
   "GetMarkdown": {
     "MetaWeblog": {
       "MetaWeblogURL": "https://rpc.cnblogs.com/metaweblog/jevonsflash", // MetaWeblog地址
-      "Username": "jevonslin", //用户名
-      "Password": "9B5BAC9F20931E93EB3F39EF329001C0604ED59808E5656CDB1FA1ED85D7881C" //密码
+      "Username": "jevonslin", //用户名 - 替换成你自己的用户名
+      "Password": "9B5BAC9F20931E93EB3F39EF329001C0604ED59808E5656CDB1FA1ED85D7881C" //密码 - 替换成你自己的密码
     },
     "ReadMorePosition": 5, //<!-- more -->标签所在的行数，设置-1时将不添加此标签
     "RecentTakeCount": 1 //获取最近文件数
