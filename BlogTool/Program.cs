@@ -152,20 +152,26 @@ namespace BlogTool
                         templateMd = templateMd.Replace("{{ date }}", md.DateCreated.HasValue ? md.DateCreated.Value.ToString("yyyy-MM-dd HH:mm:ss") : DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
                         string categoriesNode = "categories:\n";
-                        foreach (var category in md.Categories)
+                        if (md.Keywords != null)
                         {
-                            categoriesNode += $"  - {category}\n";
+                            foreach (var category in md.Categories)
+                            {
+                                categoriesNode += $"  - {category}\n";
+                            }
+
+                            templateMd = templateMd.Replace("categories:", categoriesNode);
                         }
-
-                        templateMd = templateMd.Replace("categories:", categoriesNode);
-
                         string keywordsNode = "tags:\n";
-                        foreach (var keyword in md.Keywords.Split(","))
+                        if (md.Keywords != null)
                         {
-                            keywordsNode += $"  - {keyword}\n";
+                            foreach (var keyword in md.Keywords.Split(","))
+                            {
+                                keywordsNode += $"  - {keyword}\n";
+                            }
+
+                            templateMd = templateMd.Replace("tags:", keywordsNode);
                         }
 
-                        templateMd = templateMd.Replace("tags:", keywordsNode);
 
 
                         var fileContent = md.Description;
