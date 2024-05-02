@@ -6,6 +6,7 @@ namespace BlogTool.Core.Markdown
     {
 
         public MetaWeblogOption MetaWeblogOption { get; set; }
+        public LocalOption LocalOption { get; set; }
         public int RecentTakeCount { get; set; }
         public int ReadMorePosition { get; set; }
     }

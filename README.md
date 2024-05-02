@@ -23,6 +23,7 @@
 |  Date  |  Version   | Content                                                                                         |
 | :----: | :--------: | :---------------------------------------------------------------------------------------------- |
 | V0.1.0 | 2024-4-22  | 初始版本                                                                           
+| V0.2.0 | 2024-5-3  | 完成本地获取Markdown文件                                                                           
 
 
 ## 配置
@@ -58,6 +59,10 @@
       "MetaWeblogURL": "https://rpc.cnblogs.com/metaweblog/jevonsflash", // MetaWeblog地址
       "Username": "jevonslin", //用户名 - 替换成你自己的用户名
       "Password": "9B5BAC9F20931E93EB3F39EF329001C0604ED59808E5656CDB1FA1ED85D7881C" //密码 - 替换成你自己的密码
+    },
+    "Local": {
+      "Path": ".",  //获取Markdown文件的本地路径
+      "Recursive": "false"  //是否递归获取
     },
     "ReadMorePosition": 5, //<!-- more -->标签所在的行数，设置-1时将不添加此标签
     "RecentTakeCount": 1 //获取最近文件数

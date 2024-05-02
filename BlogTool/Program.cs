@@ -73,11 +73,17 @@ namespace BlogTool
                     Username = ConfigurationHelper.GetConfigValue("GetMarkdown:MetaWeblog:Username", ""),
                     Password = ConfigurationHelper.GetConfigValue("GetMarkdown:MetaWeblog:Password", "")
                 },
+                LocalOption=new LocalOption()
+                {
+                    Path = ConfigurationHelper.GetConfigValue("GetMarkdown:Local:Path", "./"),
+                    Recursive = Convert.ToBoolean(ConfigurationHelper.GetConfigValue("GetMarkdown:Local:Recursive", "false"))
+
+                },
                 ReadMorePosition = Convert.ToInt32(ConfigurationHelper.GetConfigValue("GetMarkdown:ReadMorePosition", "-1")),
                 RecentTakeCount = CliProcessor.recentTakeCount <= 0 ? Convert.ToInt32(ConfigurationHelper.GetConfigValue("GetMarkdown:RecentTakeCount", "1")) : CliProcessor.recentTakeCount
             };
-            config.MarkdownProvider = string.IsNullOrEmpty(CliProcessor.markdownProvider) ? ConfigurationHelper.GetConfigValue("MarkdownProvider", "MetaWeblog") : CliProcessor.markdownProvider;
-            config.AssetsStoreProvider = string.IsNullOrEmpty(CliProcessor.assetsStoreProvider) ? ConfigurationHelper.GetConfigValue("AssetsStoreProvider", "Local") : CliProcessor.assetsStoreProvider;
+            config.MarkdownProvider = string.IsNullOrEmpty(CliProcessor.markdownProvider) ? ConfigurationHelper.GetConfigValue("MarkdownProvider", "") : CliProcessor.markdownProvider;
+            config.AssetsStoreProvider = string.IsNullOrEmpty(CliProcessor.assetsStoreProvider) ? ConfigurationHelper.GetConfigValue("AssetsStoreProvider", "") : CliProcessor.assetsStoreProvider;
 
 
             try
@@ -96,6 +102,10 @@ namespace BlogTool
                 {
                     creator.SetMarkdownProvider(config.GetMarkdownOption, new LocalMarkdownProvider());
 
+                }
+                else
+                {
+                    throw new ArgumentException($"'{config.MarkdownProvider}'不是合法的MarkdownProvider");
                 }
 
                 if (config.AssetsStoreProvider.ToUpper() == "EMBED")
@@ -120,7 +130,10 @@ namespace BlogTool
 
                     handler.SetAssetsStoreProvider(config.AssetsStoreOption, new HexoTagPluginAssetsStoreProvider());
                 }
-
+                else
+                {
+                    throw new ArgumentException($"'{config.AssetsStoreProvider}'不是合法的AssetsStoreProvider");
+                }
 
 
 
@@ -269,6 +282,11 @@ namespace BlogTool
 
 
                 Console.WriteLine("Time taken: {0}", sw.Elapsed);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine("{0}参数错误:{0}{1}", Environment.NewLine, ex);
+                Environment.ExitCode = 2;
             }
             catch (Exception ex)
             {
