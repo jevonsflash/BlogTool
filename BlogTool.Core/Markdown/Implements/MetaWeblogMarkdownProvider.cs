@@ -9,7 +9,7 @@ namespace BlogTool.Core.Markdown.Implements
     public class MetaWeblogMarkdownProvider : MarkdownProvider
     {
 
-        public override ICollection<IMarkdown> GetMarkdowns(GetMarkdownOption option)
+        public override ICollection<IMarkdown> GetMarkdowns(GetMarkdownOption option, params object[] objects)
         {
             var markdowns = new List<IMarkdown>();
 
