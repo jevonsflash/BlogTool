@@ -8,7 +8,7 @@
 	  <Copyright>Copyright © Linxiao 2024</Copyright>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
 	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
-	  <RepositoryUrl>https://github.com/jevonsflash/ExcelPatternTool</RepositoryUrl>
+	  <RepositoryUrl>https://github.com/jevonsflash/BlogTool</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
