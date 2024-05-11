@@ -36,8 +36,8 @@ namespace BlogTool.Core.AssetsStores
 
                 stream.Seek(0, SeekOrigin.Begin);
 
-                var displayUrl = markdownCreatorProvider.Store(stream, file, markdownTitle, _option);
-
+                var imageUrl = markdownCreatorProvider.Store(stream, file, markdownTitle, _option);
+                var displayUrl = imageUrl;
                 if (displayUrl.Length > 256)
                 {
                     displayUrl = $"路径太长，已省略中间部分 - {displayUrl.AsSpan()[..128]} ... {displayUrl.AsSpan()[^128..]}";
@@ -45,7 +45,7 @@ namespace BlogTool.Core.AssetsStores
 
                 Console.WriteLine($"图片存储成功，存储路径：{displayUrl}");
 
-                return displayUrl;
+                return imageUrl;
             }
             finally
             {
