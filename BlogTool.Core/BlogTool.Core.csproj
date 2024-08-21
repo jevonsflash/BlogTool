@@ -2,7 +2,8 @@
 
   <PropertyGroup>
 	<Version>0.2.0</Version>
-    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+      <LangVersion>Latest</LangVersion>
 	  <Authors>LinXiao</Authors>
 	  <Company>MatoApp</Company>
 	  <Copyright>Copyright © Linxiao 2024</Copyright>

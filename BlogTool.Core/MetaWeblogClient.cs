@@ -7,12 +7,12 @@ using BlogTool.Core.XmlRPC;
 
 namespace BlogTool.Core
 {
-    public class Client
+    public class MetaWeblogClient
     {
         public string AppKey = "";
         public MetaWeblogOption clientOption;
 
-        public Client(MetaWeblogOption connectionInfo)
+        public MetaWeblogClient(MetaWeblogOption connectionInfo)
         {
             clientOption = connectionInfo;
         }
@@ -49,7 +49,7 @@ namespace BlogTool.Core
                     CommentCount = struct_.Get<IntegerValue>("commentCount", 0).Integer,
                     PostStatus = struct_.Get("post_status", StringValue.NullString).String,
                     PermaLink = struct_.Get("permaLink", StringValue.NullString).String,
-                    Description = struct_.Get("description", StringValue.NullString).String,
+                    Content = struct_.Get("description", StringValue.NullString).String,
                     Categories=GetArray(struct_, "categories"),
                     Keywords= struct_.Get("mt_keywords", StringValue.NullString).String,
                 };
@@ -110,7 +110,7 @@ namespace BlogTool.Core
             {
                 //item.Categories 
                 PostID = struct_.Get<IntegerValue>("postid").ToString(),
-                Description = struct_.Get<StringValue>("description").String,
+                Content = struct_.Get<StringValue>("description").String,
                 //item.Tags
                 Link = struct_.Get("link", StringValue.NullString).String,
                 DateCreated = struct_.Get<DateTimeValue>("dateCreated").Data,
@@ -129,7 +129,7 @@ namespace BlogTool.Core
 
         public string NewPost(PostInfo pi, IList<string> categories, bool publish = true)
         {
-            return NewPost(pi.Title, pi.Description, categories, pi.DateCreated, publish);
+            return NewPost(pi.Title, pi.Content, categories, pi.DateCreated, publish);
         }
 
         public string NewPost(string title, string description, IList<string> categories, DateTime? date_created, bool publish = true)

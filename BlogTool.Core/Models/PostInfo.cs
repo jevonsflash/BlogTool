@@ -62,6 +62,13 @@ namespace BlogTool.Core.Models
             set;
         }
 
+        public string Content
+        {
+            get;
+            set;
+        }
+
+
         public string Description
         {
             get;

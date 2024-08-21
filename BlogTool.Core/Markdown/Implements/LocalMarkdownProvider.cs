@@ -29,7 +29,7 @@ namespace BlogTool.Core.Markdown.Implements
 
                             },
                             Title=fileNameWithoutExtension,
-                            Description=content,
+                            Content=content,
                             DateCreated=DateTime.Now,
                         });
 

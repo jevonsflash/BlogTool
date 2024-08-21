@@ -185,9 +185,10 @@ namespace BlogTool
                             templateMd = templateMd.Replace("tags:", keywordsNode);
                         }
 
+                        templateMd = templateMd.Replace("{{ description }}", md.Description);
 
 
-                        var fileContent = md.Description;
+                        var fileContent = md.Content;
 
                         int lineNumberToInsert = config.GetMarkdownOption.ReadMorePosition;
 
