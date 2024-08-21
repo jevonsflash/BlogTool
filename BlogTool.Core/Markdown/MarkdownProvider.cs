@@ -9,7 +9,7 @@ namespace BlogTool.Core.Markdown
 
         }
 
-        public abstract ICollection<IMarkdown> GetMarkdowns(GetMarkdownOption option);
+        public abstract ICollection<IMarkdown> GetMarkdowns(GetMarkdownOption option, params object[] objects);
 
     }
 }

@@ -19,7 +19,7 @@ namespace BlogTool.Core.Markdown.Implements
                 "sk-abfb5186d29e4a0cbd6c329517b61cce"
                 ));
         }
-        public override ICollection<IMarkdown> GetMarkdowns(GetMarkdownOption option)
+        public override ICollection<IMarkdown> GetMarkdowns(GetMarkdownOption option, params object[] objects)
         {
             var markdowns = new List<IMarkdown>();
 

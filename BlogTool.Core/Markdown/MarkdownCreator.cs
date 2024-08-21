@@ -7,9 +7,9 @@ namespace BlogTool.Core.Markdown
         private GetMarkdownOption _option;
         private IMarkdownProvider markdownCreatorProvider;
 
-        public ICollection<IMarkdown> Create()
+        public ICollection<IMarkdown> Create(params object[] objects)
         {
-            var result = markdownCreatorProvider.GetMarkdowns(_option);
+            var result = markdownCreatorProvider.GetMarkdowns(_option, objects);
             return result;
         }
 
