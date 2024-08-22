@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Sdcb.DashScope;
+namespace BlogTool.Core.Aigc.DashScope;
 
 /// <summary>
 /// Represents the possible states of a Text to Image job.

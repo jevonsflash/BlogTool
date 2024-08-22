@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Sdcb.DashScope;
+namespace BlogTool.Core.Aigc.DashScope;
 
 /// <summary>
 /// Additional information regarding the resource usage of the task.
@@ -10,6 +10,6 @@ public class ImageTaskUsage
     /// <summary>
     /// Image count
     /// </summary>
-    [JsonPropertyName("image_count")]
+    [Newtonsoft.Json.JsonProperty("image_count")]
     public int ImageCount { get; set; }
 }

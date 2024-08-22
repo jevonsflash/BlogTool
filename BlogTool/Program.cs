@@ -79,8 +79,15 @@ namespace BlogTool
                     Recursive = Convert.ToBoolean(ConfigurationHelper.GetConfigValue("GetMarkdown:Local:Recursive", "false"))
 
                 },
+                AigcOption=new AigcOption()
+                {
+                    Target = ConfigurationHelper.GetConfigValue("GetMarkdown:Aigc:Target", ""),
+                    Provider = ConfigurationHelper.GetConfigValue("GetMarkdown:Aigc:Provider", ""),
+                    ApiKey = ConfigurationHelper.GetConfigValue("GetMarkdown:Aigc:ApiKey", ""),
+
+                },
                 ReadMorePosition = Convert.ToInt32(ConfigurationHelper.GetConfigValue("GetMarkdown:ReadMorePosition", "-1")),
-                RecentTakeCount = CliProcessor.recentTakeCount <= 0 ? Convert.ToInt32(ConfigurationHelper.GetConfigValue("GetMarkdown:RecentTakeCount", "1")) : CliProcessor.recentTakeCount
+                RecentTakeCount = CliProcessor.recentTakeCount <= 0 ? Convert.ToInt32(ConfigurationHelper.GetConfigValue("GetMarkdown:RecentTakeCount", "1")) : CliProcessor.recentTakeCount,
             };
             config.MarkdownProvider = string.IsNullOrEmpty(CliProcessor.markdownProvider) ? ConfigurationHelper.GetConfigValue("MarkdownProvider", "") : CliProcessor.markdownProvider;
             config.AssetsStoreProvider = string.IsNullOrEmpty(CliProcessor.assetsStoreProvider) ? ConfigurationHelper.GetConfigValue("AssetsStoreProvider", "") : CliProcessor.assetsStoreProvider;

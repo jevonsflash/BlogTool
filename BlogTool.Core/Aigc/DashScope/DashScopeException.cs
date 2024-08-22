@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sdcb.DashScope;
+namespace BlogTool.Core.Aigc.DashScope;
 
 /// <summary>
 /// Represents an exception that is thrown by the DashScope API.

@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Sdcb.DashScope;
+namespace BlogTool.Core.Aigc.DashScope;
 
 /// <summary>
 /// Converter class for the Enum Type <see cref="DashScopeTaskStatus"/>. It provides the custom serialization and deserialization logic
@@ -13,7 +13,7 @@ public class TaskStatusConverter : JsonConverter<DashScopeTaskStatus>
     /// <inheritdoc/>
     public override DashScopeTaskStatus Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        string? value = reader.GetString();
+        string value = reader.GetString();
         if (Enum.TryParse(value, true, out DashScopeTaskStatus status))
         {
             return status;

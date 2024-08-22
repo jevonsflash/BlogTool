@@ -4,8 +4,9 @@ using System.Threading;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using BlogTool.Core.Aigc.DashScope;
 
-namespace Sdcb.DashScope.StableDiffusion;
+namespace BlogTool.Core.Aigc.DashScope.StableDiffusion;
 
 /// <summary>
 /// The Stable Diffusion API provides a series of AI models that can be used to generate images from text.
@@ -27,7 +28,7 @@ public class StableDiffusionClient
     /// <param name="model">The name of the model to use for image generation. Allowed values are "stable-diffusion-xl" or "stable-diffusion-v1.5".</param>
     /// <param name="cancellationToken">A cancellation token that can be used to cancel the request.</param>
     /// <returns>A Task representing the asynchronous operation that returns a <see cref="DashScopeTask"/> which contains information about the generation task.</returns>
-    public async Task<DashScopeTask> Text2Image(Text2ImagePrompt prompt, Text2ImageParams? parameters = null, string model = "stable-diffusion-xl", CancellationToken cancellationToken = default)
+    public async Task<DashScopeTask> Text2Image(Text2ImagePrompt prompt, Text2ImageParams parameters = null, string model = "stable-diffusion-xl", CancellationToken cancellationToken = default)
     {
         HttpRequestMessage httpRequest = new(HttpMethod.Post, @"https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis")
         {

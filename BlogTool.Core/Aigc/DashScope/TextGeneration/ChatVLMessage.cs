@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Sdcb.DashScope.TextGeneration;
+namespace BlogTool.Core.Aigc.DashScope.TextGeneration;
 
 /// <summary>
 /// A single chat message within the conversation, with visual ability supported.
@@ -54,13 +54,13 @@ public record ChatVLMessage
     /// <summary>
     /// Gets or sets the role of the message sender, allowed values are "system", "user", "assistant".
     /// </summary>
-    [JsonPropertyName("role")]
+    [Newtonsoft.Json.JsonProperty("role")]
     public required string Role { get; set; }
 
     /// <summary>
     /// The content of the message.
     /// </summary>
-    [JsonPropertyName("content")]
+    [Newtonsoft.Json.JsonProperty("content")]
     public required ContentItem[] Content { get; set; }
 
     /// <summary>
@@ -101,7 +101,7 @@ public record TextContentItem : ContentItem
     /// <summary>
     /// Gets or sets the text of this content item.
     /// </summary>
-    [JsonPropertyName("text")]
+    [Newtonsoft.Json.JsonProperty("text")]
     public required string Text { get; init; }
 
     /// <summary>
@@ -118,7 +118,7 @@ public record ImageContentItem : ContentItem
     /// <summary>
     /// Gets or sets the URL of the image in this content item.
     /// </summary>
-    [JsonPropertyName("image")]
+    [Newtonsoft.Json.JsonProperty("image")]
     public required string Image { get; init; }
 
     /// <returns>The content of <c>"image(<see cref="Image"/>)"</c>.</returns>

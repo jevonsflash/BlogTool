@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
-namespace Sdcb.DashScope.TextGeneration;
+namespace BlogTool.Core.Aigc.DashScope.TextGeneration;
 
 /// <summary>
 /// A single chat message within the conversation.
@@ -52,13 +52,13 @@ public record ChatMessage
     /// Gets or sets the role of the message sender.
     /// The role indicates if the sender is a system, a user, or an assistant.
     /// </summary>
-    [JsonPropertyName("role")]
+    [Newtonsoft.Json.JsonProperty("role")]
     public required string Role { get; set; }
 
     /// <summary>
     /// Gets or sets the content of the message.
     /// This is the actual text of the message sent by the sender.
     /// </summary>
-    [JsonPropertyName("content")]
+    [Newtonsoft.Json.JsonProperty("content")]
     public required string Content { get; set; }
 }

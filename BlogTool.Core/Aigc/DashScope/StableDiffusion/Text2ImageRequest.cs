@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
-namespace Sdcb.DashScope.StableDiffusion;
+namespace BlogTool.Core.Aigc.DashScope.StableDiffusion;
 
 /// <summary>
 /// The request class for generating images from text using a specific model.
@@ -20,7 +20,7 @@ public record Text2ImageRequest
     /// <param name="negativePrompt">An additional optional negative prompt to steer the generation away from certain concepts or elements.</param>
 
     [SetsRequiredMembers]
-    public Text2ImageRequest(string prompt, string? negativePrompt = null)
+    public Text2ImageRequest(string prompt, string negativePrompt = null)
     {
         InputPrompt = new Text2ImagePrompt(prompt, negativePrompt) { };
     }
@@ -29,18 +29,18 @@ public record Text2ImageRequest
     /// The name of the model to use for image generation.
     /// Allowed values are "stable-diffusion-xl" or "stable-diffusion-v1.5".
     /// </summary>
-    [JsonPropertyName("model")]
+    [Newtonsoft.Json.JsonProperty("model")]
     public required string Model { get; init; } = "stable-diffusion-xl";
 
     /// <summary>
     /// The input prompt information for the image generation.
     /// </summary>
-    [JsonPropertyName("input")]
+    [Newtonsoft.Json.JsonProperty("input")]
     public required Text2ImagePrompt InputPrompt { get; init; } = null!;
 
     /// <summary>
     /// The parameters for image generation, such as resolution, quantity, and quality settings.
     /// </summary>
-    [JsonPropertyName("parameters")]
+    [Newtonsoft.Json.JsonProperty("parameters")]
     public required Text2ImageParams Parameters { get; init; } = new Text2ImageParams();
 }

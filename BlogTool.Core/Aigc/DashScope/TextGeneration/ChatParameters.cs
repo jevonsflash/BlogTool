@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Sdcb.DashScope.TextGeneration;
+namespace BlogTool.Core.Aigc.DashScope.TextGeneration;
 
 /// <summary>
 /// Parameters for LLM execution.
@@ -11,15 +11,15 @@ public record ChatParameters
     /// Format of the result - "text" for old text version, "message" for OpenAI compatible message.
     /// <para>This field must be "text" in for language model, not been used in VL model.</para>
     /// </summary>
-    [JsonPropertyName("result_format")]
-    public string? ResultFormat { get; set; }
+    [Newtonsoft.Json.JsonProperty("result_format")]
+    public string ResultFormat { get; set; }
 
     /// <summary>
     /// Seed for the random number generator to control the randomness of the model's generation.
     /// Using the same seed allows for the reproducibility of the model's output.
     /// <para>This field is optional. Default value is 1234.</para>
     /// </summary>
-    [JsonPropertyName("seed")]
+    [Newtonsoft.Json.JsonProperty("seed")]
     public ulong? Seed { get; set; }
 
     /// <summary>
@@ -28,7 +28,7 @@ public record ChatParameters
     /// <para>qwen-turbo and qwen-max-longcontext have a maximum and default of 1500,</para>
     /// <para>qwen-max, qwen-max-1201, and qwen-plus have a maximum and default of 2048.</para>
     /// </summary>
-    [JsonPropertyName("max_tokens")]
+    [Newtonsoft.Json.JsonProperty("max_tokens")]
     public int? MaxTokens { get; set; }
 
     /// <summary>
@@ -38,7 +38,7 @@ public record ChatParameters
     /// <para>the smaller the value, the lower the randomness. This field is optional.</para>
     /// <para>Default value is 0.8. Note that the value should not be greater than or equal to 1.</para>
     /// </summary>
-    [JsonPropertyName("top_p")]
+    [Newtonsoft.Json.JsonProperty("top_p")]
     public float? TopP { get; set; }
 
     /// <summary>
@@ -47,7 +47,7 @@ public record ChatParameters
     /// a smaller value increases determinism. Note: If top_k is null or greater than 100,
     /// the top_k strategy is not used, and only top_p is effective. The default is null.
     /// </summary>
-    [JsonPropertyName("top_k")]
+    [Newtonsoft.Json.JsonProperty("top_k")]
     public int? TopK { get; set; }
 
     /// <summary>
@@ -55,7 +55,7 @@ public record ChatParameters
     /// A value of 1.0 means no penalty. This field is optional.
     /// <para>Default value is 1.1.</para>
     /// </summary>
-    [JsonPropertyName("repetition_penalty")]
+    [Newtonsoft.Json.JsonProperty("repetition_penalty")]
     public float? RepetitionPenalty { get; set; }
 
     /// <summary>
@@ -68,7 +68,7 @@ public record ChatParameters
     /// Value range is [0, 2). The system's default value is 1.0.
     /// </para>
     /// </summary>
-    [JsonPropertyName("temperature")]
+    [Newtonsoft.Json.JsonProperty("temperature")]
     public float? Temperature { get; set; }
 
     /// <summary>
@@ -81,8 +81,8 @@ public record ChatParameters
     /// they should all be of the same type.
     /// </para>
     /// </summary>
-    [JsonPropertyName("stop")]
-    public object? Stop { get; set; }
+    [Newtonsoft.Json.JsonProperty("stop")]
+    public object Stop { get; set; }
 
     /// <summary>
     /// Controls whether to take search results into account during generation.
@@ -93,7 +93,7 @@ public record ChatParameters
     /// </para>
     /// <para>This field is optional and defaults to false.</para>
     /// </summary>
-    [JsonPropertyName("enable_search")]
+    [Newtonsoft.Json.JsonProperty("enable_search")]
     public bool? EnableSearch { get; set; }
 
     /// <summary>
@@ -105,6 +105,6 @@ public record ChatParameters
     /// </para>
     /// This field is optional and only applicable in streaming output modes.
     /// </summary>
-    [JsonPropertyName("incremental_output")]
+    [Newtonsoft.Json.JsonProperty("incremental_output")]
     public bool? IncrementalOutput { get; set; }
 }

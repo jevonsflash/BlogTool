@@ -3,14 +3,14 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Sdcb.DashScope;
+namespace BlogTool.Core.Aigc.DashScope;
 
 /// <summary>
 /// Converts a <see cref="DateTime"/> to and from a string in the format "yyyy-MM-dd HH:mm:ss.fff".
 /// </summary>
 public class DashScopeDateTimeConverter : JsonConverter<DateTime>
 {
-    private readonly string[] AllowedDateTimeFormats = 
+    private readonly string[] AllowedDateTimeFormats =
     [
         "yyyy-MM-dd HH:mm:ss.fff",
         "yyyy-MM-dd HH:mm:ss"
@@ -19,7 +19,7 @@ public class DashScopeDateTimeConverter : JsonConverter<DateTime>
     /// <inheritdoc/>
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        string? dateString = reader.GetString();
+        string dateString = reader.GetString();
         foreach (string format in AllowedDateTimeFormats)
         {
             if (DateTime.TryParseExact(dateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))

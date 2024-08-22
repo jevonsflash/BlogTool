@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Sdcb.DashScope.TextGeneration;
+namespace BlogTool.Core.Aigc.DashScope.TextGeneration;
 
 /// <summary>
 /// The output of chat request.
@@ -10,7 +10,7 @@ public record ChatOutput
     /// <summary>
     /// Output content of the model.
     /// </summary>
-    [JsonPropertyName("text")]
+    [Newtonsoft.Json.JsonProperty("text")]
     public required string Text { get; init; }
 
     /// <summary>
@@ -21,6 +21,6 @@ public record ChatOutput
     /// <item><c>length</c> when content is too long</item>
     /// </list>
     /// </summary>
-    [JsonPropertyName("finish_reason")]
-    public required string? FinishReason { get; init; }
+    [Newtonsoft.Json.JsonProperty("finish_reason")]
+    public required string FinishReason { get; init; }
 }

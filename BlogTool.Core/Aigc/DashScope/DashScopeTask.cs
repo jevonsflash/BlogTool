@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Sdcb.DashScope;
+namespace BlogTool.Core.Aigc.DashScope;
 
 /// <summary>
 /// Represents the output section of the Text to Image response.
@@ -11,12 +11,12 @@ public class DashScopeTask
     /// Gets or sets the job ID of the asynchronous task for the current request.
     /// The actual job result needs to be obtained through the asynchronous task query interface.
     /// </summary>
-    [JsonPropertyName("task_id")]
+    [Newtonsoft.Json.JsonProperty("task_id")]
     public string TaskId { get; init; } = null!;
 
     /// <summary>
     /// Gets or sets the job status after submitting the asynchronous task.
     /// </summary>
-    [JsonPropertyName("task_status")]
+    [Newtonsoft.Json.JsonProperty("task_status")]
     public DashScopeTaskStatus TaskStatus { get; init; }
 }

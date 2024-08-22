@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Sdcb.DashScope;
+namespace BlogTool.Core.Aigc.DashScope;
 
 /// <summary>
 /// Helper class representing task performance metrics.
@@ -10,18 +10,18 @@ public record TaskMetrics
     /// <summary>
     /// Gets or initializes the total number of tasks.
     /// </summary>
-    [JsonPropertyName("TOTAL")]
+    [Newtonsoft.Json.JsonProperty("TOTAL")]
     public int Total { get; init; }
 
     /// <summary>
     /// Gets or initializes the number of tasks that succeeded.
     /// </summary>
-    [JsonPropertyName("SUCCEEDED")]
+    [Newtonsoft.Json.JsonProperty("SUCCEEDED")]
     public int Succeeded { get; init; }
 
     /// <summary>
     /// Gets or initializes the number of tasks that failed.
     /// </summary>
-    [JsonPropertyName("FAILED")]
+    [Newtonsoft.Json.JsonProperty("FAILED")]
     public int Failed { get; init; }
 }

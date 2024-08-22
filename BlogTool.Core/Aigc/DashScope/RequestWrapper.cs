@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
-
-namespace Sdcb.DashScope;
+using Newtonsoft.Json;
+namespace BlogTool.Core.Aigc.DashScope;
 
 internal record RequestWrapper
 {
@@ -21,12 +21,12 @@ internal record RequestWrapper
 
 internal record RequestWrapper<TInput, TParameters> : RequestWrapper
 {
-    [JsonPropertyName("model")]
+    [JsonProperty("model")]
     public required string Model { get; set; }
 
-    [JsonPropertyName("input")]
+    [JsonProperty("input")]
     public required TInput Input { get; init; }
 
-    [JsonPropertyName("parameters")]
+    [JsonProperty("parameters")]
     public TParameters? Parameters { get; init; }
 }
