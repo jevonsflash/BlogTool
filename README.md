@@ -9,23 +9,28 @@
 ## 特点
 
 
-1. 支持MetaWeblog协议
+1. 支持MetaWeblog协议，本地Markdown文件
 2. Hexo模板头处理和常用标签处理
-3. 支持图片保存为内嵌Base64编码
-4. 支持图片保存为[资源文件夹](https://hexo.io/zh-cn/docs/asset-folders#%E6%96%87%E7%AB%A0%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6%E5%A4%B9)
-5. 支持图片保存为[标签插件](https://hexo.io/zh-cn/docs/asset-folders#%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E5%BC%95%E7%94%A8%E7%9A%84%E6%A0%87%E7%AD%BE%E6%8F%92%E4%BB%B6)
-6. 支持自定义图片文字水印（支持：PNG、JPG、Webp、Gif、Tiff、BMP）
-7. 支持图片压缩（支持：PNG、JPG、Webp、Tiff），转换格式
-
+3. 支持图片处理
+    * 图片保存为内嵌Base64编码
+    * 图片保存为[资源文件夹](https://hexo.io/zh-cn/docs/asset-folders#%E6%96%87%E7%AB%A0%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6%E5%A4%B9)
+    * 图片保存为[标签插件](https://hexo.io/zh-cn/docs/asset-folders#%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E5%BC%95%E7%94%A8%E7%9A%84%E6%A0%87%E7%AD%BE%E6%8F%92%E4%BB%B6)
+    * 自定义图片文字水印（支持：PNG、JPG、Webp、Gif、Tiff、BMP）
+    * 图片压缩（支持：PNG、JPG、Webp、Tiff），转换格式
+4. 支持Ai生成内容
+    * Ai 生成文章摘要
+    * [Todo] Ai 生成标签列表
+    * [Todo] Ai 生成文章封面图
+    
 
 ## 更新内容
 
 |  Date  |  Version   | Content                                                                                         |
 | :----: | :--------: | :---------------------------------------------------------------------------------------------- |
 | V0.1.0 | 2024-4-22  | 初始版本                                                                           
-| V0.2.0 | 2024-5-3  | 完成本地获取Markdown文件                                                                           
+| V0.2.0 | 2024-5-3  | 完成本地获取Markdown文件   
 | V0.2.1 | 2024-5-11  | 修复错误  
-
+| V0.3.0 | 2024-8-22  | 添加Ai生成文章摘要功能  
 
 ## 配置
 
@@ -55,20 +60,35 @@
       "ConvertFormatTo": "jpg" // 是否转换格式，支持一些常见的图片格式，如果不想转换，填null即可 如："ConvertFormatTo": null
     }
   },
+
+  //for cnblogs
   "GetMarkdown": {
     "MetaWeblog": {
       "MetaWeblogURL": "https://rpc.cnblogs.com/metaweblog/jevonsflash", // MetaWeblog地址
       "Username": "jevonslin", //用户名 - 替换成你自己的用户名
       "Password": "9B5BAC9F20931E93EB3F39EF329001C0604ED59808E5656CDB1FA1ED85D7881C" //密码 - 替换成你自己的密码
     },
+    // for oschina
+    //"MetaWeblog": {
+    //      "MetaWeblogURL": "https://my.oschina.net/action/xmlrpc/jevonsflash",
+    //      "BlogURL": "https://my.oschina.net/blog",
+    //      "Username": "jevonslin",
+    //      "Password": "9B5BAC9F20931E93EB3F39EF329001C0604ED59808E5656CDB1FA1ED85D7881C"
+    //},
     "Local": {
-      "Path": ".",  //获取Markdown文件的本地路径
-      "Recursive": "false"  //是否递归获取
+      "Path": ".", //获取Markdown文件的本地路径
+      "Recursive": "false" //是否递归获取
     },
+
     "ReadMorePosition": 5, //<!-- more -->标签所在的行数，设置-1时将不添加此标签
-    "RecentTakeCount": 1 //获取最近文件数
+    "RecentTakeCount": 1, //获取最近文件数,
+    "Aigc": {
+      "Target": "Description,Tag", // Ai 内容生成目标，可选Description,Tag，用英文逗号隔开
+      "Provider": "DashScope", // Ai 内容生成提供者
+      "ApiKey": "sk-00000000000000000000000000000000" //Ai 内容生成密钥 - 替换成你自己的密钥
+    }
   },
-  "MarkdownProvider": "MetaWeblog", //Markdown内容提供方式，值为MetaWeblog, Local【可被-m参数覆盖】
+  "MarkdownProvider": "MetaWeblog", //Markdown内容提供者，值为MetaWeblog, Local【可被-m参数覆盖】
   "AssetsStoreProvider": "Local" //图片存储方式，值为Embed, Local, Hexo-Asset-Folder, Hexo-Tag-Plugin【可被-a参数覆盖】
 }
 ```
@@ -89,20 +109,52 @@
 
 
 
-## 示例
+## 快速开始
 
-使用hexo-cli创建项目
+### 准备你Hexo博客
+
+1. 在磁盘上（如`D:\Project`）创建工作目录，使用[hexo-cli](https://hexo.io/zh-cn/docs/commands.html)创建项目
 
 ```
+mkdir -p D:\Project 
+cd D:\Project
 hexo init blog
 ```
-或从Github下载hexo项目
+
+
+2. 下载BlogTool到你的Hexo项目根目录
+
+https://github.com/jevonsflash/BlogTool/raw/master/BT/blogtool.exe
+
+3. 用Markdown格式写几篇博客，因为HexoPath默认配置为`./`所以你的`.md`文件可以暂时保存在Hexo项目根目录
+
+4. 在当前目录下运行
+
+```
+blogtool.exe -r 1 -a local
+```
+5. 执行Hexo调试三连或者部署三连，就可以看到效果了
+
+```
+hexo clean
+hexo generate
+hexo deploy
+
+```
+
+
+## 示例
+
+
+为方便演示，我用自己的博客演示，从代码仓库下载我的博客Hexo项目
 
 ```
 mkdir -p D:\Project 
 cd D:\Project
 git clone https://github.com/jevonsflash/blog.git blog
 ```
+
+
 
 ### Sample1：图片保存在本地assets文件夹
 
@@ -129,11 +181,55 @@ Markdown 中的图片修改为`{% asset_path slug %}`格式
 
 ![alt text](Assets/image-2.png)
 
+
+
+## 可扩展性
+
+BlogTool默认提供`LocalMarkdownProvider`与`MetaWeblogMarkdownProvider`两个Markdown内容提供者
+
+你可以自己定义一个Markdown内容提供者，比如从你的网盘，Ftp或第三方Api获得Markdown内容。
+
+下面演示如何扩展一个通过传入文本来提供Markdown内容：
+
+
+
+```
+public class TextMarkdownProvider : MarkdownProvider
+{
+    public override ICollection<IMarkdown> GetMarkdowns(GetMarkdownOption option, params object[] objects)
+    {
+        var markdowns = new List<IMarkdown>();
+        var p = objects[0] as dynamic;
+        markdowns.Add(new PostInfo()
+        {
+            Categories = p.Category,
+            Title = p.Title,
+            Description = p.Content,
+            DateCreated = DateTime.Now,
+        });
+
+
+        return markdowns;
+    }
+}
+```
+
+使用:
+
+
+```
+creator.SetMarkdownProvider(getMarkdownOption, new TextMarkdownProvider(), new { Title = title, Content = content new List<string>(){"TagA","TagB"}});
+var mds = creator.Create(objects);
+```
+
+
+
 ## Todo:
 
-- [ ] 本地Markdown导入
-- [ ] 七牛云存储
-- [ ] WPF界面
+- [x] 本地Markdown导入
+- [x] WPF界面
+- [ ] 图床存储图片
+- [ ] AIGC 内容提取
 
 
 ## 已知问题
